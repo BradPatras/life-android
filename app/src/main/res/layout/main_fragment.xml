@@ -7,11 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainFragment">
 
-    <io.github.bradpatras.life.ui.main.views.DotBoardView
-        android:id="@+id/board_view"
+    <io.github.bradpatras.life.ui.main.views.ScrollingLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        />
+        android:background="@color/white"
+        >
+
+        <io.github.bradpatras.life.ui.main.views.DotBoardView
+            android:id="@+id/board_view"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            />
+
+    </io.github.bradpatras.life.ui.main.views.ScrollingLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,16 +2,13 @@ package io.github.bradpatras.life.ui.main.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
-import android.text.TextPaint
 import android.util.AttributeSet
-import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import io.github.bradpatras.life.R
 
-class DotBoardView : View {
+class DotBoardView : FrameLayout {
 
     class Dot(val x: Int, val y: Int)
 
@@ -20,12 +17,15 @@ class DotBoardView : View {
     private val dotSpacing: Int = 10
     private val dotSize: Int = 20
 
+    private var mPosX = 0f
+    private var mPosY = 0f
+
     constructor(context: Context) : super(context) {
-        init(null, 0)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(attrs, 0)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
@@ -33,15 +33,12 @@ class DotBoardView : View {
         attrs,
         defStyle
     ) {
-        init(attrs, defStyle)
+        init()
     }
 
-    private fun init(attrs: AttributeSet?, defStyle: Int) {
-       setup()
-    }
-
-    private fun setup() {
-
+    private fun init() {
+        setWillNotDraw(false)
+        // initial setup
     }
 
     override fun onDraw(canvas: Canvas) {
