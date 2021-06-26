@@ -28,4 +28,4 @@ Don't loop through the entire board, only test spaces that are neighboring the c
 
 it'll need to keep track of the alive spaces in a separate property from the 2D board of spaces. 
 
-First build up a list of "relevant spaces" by looping through the alive array and for each alive space, add its coordinate and all its neighbor coordinates.  Then run the life rules on the "relevant spaces" array.  
+First build up a set of "relevant spaces" by looping through the alive array and for each alive space, add its coordinate and all its neighbor coordinates.  Then run the life rules on the "relevant spaces" set.  
