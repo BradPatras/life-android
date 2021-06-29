@@ -8,8 +8,8 @@ import androidx.core.view.children
 
 
 class ScrollingLayout : FrameLayout {
-    private var mPosX = 0f
-    private var mPosY = 0f
+    private var touchPosX = 0f
+    private var touchPosY = 0f
 
     constructor(context: Context) : super(context) {
         init()
@@ -34,15 +34,15 @@ class ScrollingLayout : FrameLayout {
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                mPosX = ev.rawX
-                mPosY = ev.rawY
+                touchPosX = ev.rawX
+                touchPosY = ev.rawY
             }
             MotionEvent.ACTION_MOVE -> {
                 children.iterator().forEach {
-                    it.x += ev.rawX - mPosX
-                    it.y += ev.rawY - mPosY
-                    mPosX = ev.rawX
-                    mPosY = ev.rawY
+                    it.x += ev.rawX - touchPosX
+                    it.y += ev.rawY - touchPosY
+                    touchPosX = ev.rawX
+                    touchPosY = ev.rawY
                     it.invalidate()
                 }
             }

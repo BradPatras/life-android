@@ -14,11 +14,8 @@ class DotBoardView : FrameLayout {
 
     var dots: Array<Dot> = emptyArray()
 
-    private val dotSpacing: Int = 10
-    private val dotSize: Int = 20
-
-    private var mPosX = 0f
-    private var mPosY = 0f
+    private val dotSpacing: Int = 2
+    private val dotSize: Int = 16
 
     constructor(context: Context) : super(context) {
         init()
