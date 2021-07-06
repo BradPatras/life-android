@@ -2,8 +2,11 @@ package io.github.bradpatras.life.ui.main.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import io.github.bradpatras.life.R
@@ -13,8 +16,16 @@ class DotBoardView : FrameLayout {
     class Dot(val x: Int, val y: Int)
 
     var dots: Array<Dot> = emptyArray()
+    val gridPaint = Paint().apply {
+        color = Color.BLACK
+        strokeWidth = 1f
+    }
 
-    private val dotSpacing: Int = 2
+    val dotPaint = Paint().apply {
+        color = Color.BLACK
+    }
+
+    private val dotSpacing: Int = 0
     private val dotSize: Int = 16
 
     constructor(context: Context) : super(context) {
@@ -35,6 +46,7 @@ class DotBoardView : FrameLayout {
 
     private fun init() {
         setWillNotDraw(false)
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         // initial setup
     }
 
@@ -42,10 +54,33 @@ class DotBoardView : FrameLayout {
         super.onDraw(canvas)
         dots.forEach { dot ->
 
-            context.getDrawable(R.drawable.dot)?.let { drawable ->
-                drawable.bounds = getDotRect(dot)
-                drawable.draw(canvas)
-            }
+//            context.getDrawable(R.drawable.dot)?.let { drawable ->
+//                drawable.bounds = getDotRect(dot)
+//                drawable.draw(canvas)
+//            }
+            canvas.drawRect(getDotRect(dot), dotPaint)
+        }
+
+        val hLines = width / (dotSize + dotSpacing)
+        for (index in 0..hLines) {
+            canvas.drawLine(
+                0f,
+                (index * (dotSize + dotSpacing)).toFloat() - 1f,
+                width.toFloat(),
+                (index * (dotSize + dotSpacing)).toFloat() - 1f,
+                gridPaint
+            )
+        }
+
+        val vLines = height / (dotSize + dotSpacing)
+        for (index in 0..vLines) {
+            canvas.drawLine(
+                (index * (dotSize + (dotSpacing))).toFloat() - 1f,
+                0f,
+                (index * (dotSize + (dotSpacing))).toFloat() - 1f,
+                height.toFloat() ,
+                gridPaint
+            )
         }
     }
 

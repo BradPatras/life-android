@@ -42,7 +42,7 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        
+
         lifecycleScope.launchWhenCreated {
             viewModel.isEditing.collect {
                 withContext(Dispatchers.Main) {
@@ -72,15 +72,16 @@ class MainFragment : Fragment() {
     private fun startGame(): Job {
 
         // seed alive cells
-//        boardController.updateCell(5, 5, Cell.ALIVE)
-//        boardController.updateCell(6, 6, Cell.ALIVE)
-//        boardController.updateCell(5, 7, Cell.ALIVE)
-//        boardController.updateCell(4, 7, Cell.ALIVE)
-//        boardController.updateCell(6, 7, Cell.ALIVE)
-
         boardController.updateCell(5, 5, Cell.ALIVE)
-        boardController.updateCell(5, 6, Cell.ALIVE)
+        boardController.updateCell(6, 6, Cell.ALIVE)
         boardController.updateCell(5, 7, Cell.ALIVE)
+        boardController.updateCell(4, 7, Cell.ALIVE)
+        boardController.updateCell(6, 7, Cell.ALIVE)
+
+//        boardController.updateCell(5, 5, Cell.ALIVE)
+//        boardController.updateCell(5, 6, Cell.ALIVE)
+//        boardController.updateCell(6, 6, Cell.ALIVE)
+//        boardController.updateCell(6, 5, Cell.ALIVE)
 
         return MainScope().launch {
             withContext(Dispatchers.IO) {
