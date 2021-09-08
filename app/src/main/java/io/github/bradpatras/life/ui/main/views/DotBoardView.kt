@@ -6,20 +6,23 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.github.bradpatras.life.R
 
 class DotBoardView : FrameLayout {
 
-    class Dot(val x: Int, val y: Int)
+    var tappedDotLiveData: MutableLiveData<Dot?> = MutableLiveData(null)
 
     var dots: Array<Dot> = emptyArray()
-    val gridPaint = Paint().apply {
+
+    private val gridPaint = Paint().apply {
         color = Color.BLACK
         strokeWidth = gridLineWidth
         isAntiAlias = false
     }
 
-    val dotPaint = Paint().apply {
+    private val dotPaint = Paint().apply {
         color = Color.BLACK
     }
 
@@ -45,17 +48,11 @@ class DotBoardView : FrameLayout {
 
     private fun init() {
         setWillNotDraw(false)
-        // initial setup
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         dots.forEach { dot ->
-
-//            context.getDrawable(R.drawable.dot)?.let { drawable ->
-//                drawable.bounds = getDotRect(dot)
-//                drawable.draw(canvas)
-//            }
             canvas.drawRect(getDotRect(dot), dotPaint)
         }
 
@@ -84,11 +81,18 @@ class DotBoardView : FrameLayout {
     }
 
     private fun getDotRect(dot: Dot): Rect {
-        return Rect(
-                dot.x * (dotSize + dotSpacing),
-                dot.y * (dotSize + dotSpacing),
-                dot.x * (dotSize + dotSpacing) + dotSize,
-                dot.y * (dotSize + dotSpacing) + dotSize
-        )
+        val left = dot.x * (dotSize + dotSpacing)
+        val top = dot.y * (dotSize + dotSpacing)
+        val right = left + dotSize
+        val bottom = top + dotSize
+
+        return Rect(left, top, right, bottom)
+    }
+
+    private fun createDotAtPoint(point: Point): Dot {
+        val dotX = point.x / (dotSize + dotSpacing)
+        val dotY = point.y / (dotSize + dotSpacing)
+
+        return Dot(dotX, dotY)
     }
 }

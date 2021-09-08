@@ -8,14 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import io.github.bradpatras.life.R
 import io.github.bradpatras.life.databinding.MainFragmentBinding
 import io.github.bradpatras.life.ui.main.controllers.BoardController
 import io.github.bradpatras.life.ui.main.controllers.LifeController
 import io.github.bradpatras.life.ui.main.models.Cell
-import io.github.bradpatras.life.ui.main.views.DotBoardView
+import io.github.bradpatras.life.ui.main.models.Dot
 import kotlinx.coroutines.*
-import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.flow.collect
 
 class MainFragment : Fragment() {
@@ -26,7 +24,7 @@ class MainFragment : Fragment() {
 
     private lateinit var binding: MainFragmentBinding
     private lateinit var viewModel: MainViewModel
-
+    private var gameJob: Job? = null
     private val boardController: BoardController = BoardController(Size(500, 500))
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -37,10 +35,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         lifecycleScope.launchWhenCreated {
@@ -51,11 +46,25 @@ class MainFragment : Fragment() {
             }
         }
 
-        startGame()
+        binding.boardView.tappedDotLiveData.observe(this.viewLifecycleOwner) { dot ->
+            dotTapped(dot)
+        }
+
+        gameJob = startGame()
+    }
+
+    private fun dotTapped(dot: Dot) {
+        if (viewModel.isEditing.value) {
+
+        }
     }
 
     private fun setIsEditing(isEditing: Boolean) {
-
+        if (isEditing) {
+            pauseGame()
+        } else {
+            startGame()
+        }
     }
 
     private fun runGameCycle() {
@@ -69,14 +78,18 @@ class MainFragment : Fragment() {
         binding.boardView.invalidate()
     }
 
+    private fun pauseGame() {
+        gameJob?.cancel()
+    }
+
     private fun startGame(): Job {
 
         // seed alive cells
-        boardController.updateCell(5, 5, Cell.ALIVE)
-        boardController.updateCell(6, 6, Cell.ALIVE)
-        boardController.updateCell(5, 7, Cell.ALIVE)
-        boardController.updateCell(4, 7, Cell.ALIVE)
-        boardController.updateCell(6, 7, Cell.ALIVE)
+//        boardController.updateCell(5, 5, Cell.ALIVE)
+//        boardController.updateCell(6, 6, Cell.ALIVE)
+//        boardController.updateCell(5, 7, Cell.ALIVE)
+//        boardController.updateCell(4, 7, Cell.ALIVE)
+//        boardController.updateCell(6, 7, Cell.ALIVE)
 
 //        boardController.updateCell(5, 5, Cell.ALIVE)
 //        boardController.updateCell(5, 6, Cell.ALIVE)
