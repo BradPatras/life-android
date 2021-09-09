@@ -2,17 +2,16 @@ package io.github.bradpatras.life.ui.main
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Size
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import io.github.bradpatras.life.R
 import io.github.bradpatras.life.databinding.MainFragmentBinding
-import io.github.bradpatras.life.ui.main.controllers.BoardController
-import io.github.bradpatras.life.ui.main.controllers.LifeController
-import io.github.bradpatras.life.ui.main.models.Cell
 import io.github.bradpatras.life.ui.main.models.Dot
+import io.github.bradpatras.life.ui.main.models.GameState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
@@ -24,8 +23,6 @@ class MainFragment : Fragment() {
 
     private lateinit var binding: MainFragmentBinding
     private lateinit var viewModel: MainViewModel
-    private var gameJob: Job? = null
-    private val boardController: BoardController = BoardController(Size(500, 500))
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -35,77 +32,73 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.topBar.apply {
+            inflateMenu(R.menu.main_menu)
+            setOnMenuItemClickListener(this@MainFragment::menuItemClicked)
+        }
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         lifecycleScope.launchWhenCreated {
-            viewModel.isEditing.collect {
+            viewModel.gameState.collect { gameState ->
                 withContext(Dispatchers.Main) {
-                    setIsEditing(it)
+                    when (gameState) {
+                        GameState.PLAYING -> {
+                            binding.topBar.menu.findItem(R.id.edit)?.isVisible = true
+                            binding.topBar.menu.findItem(R.id.start)?.isVisible = false
+                        }
+                        GameState.EDITING -> {
+                            binding.topBar.menu.findItem(R.id.edit)?.isVisible = false
+                            binding.topBar.menu.findItem(R.id.start)?.isVisible = true
+                        }
+                    }
+                }
+            }
+
+            viewModel.gameDots.collect { dots ->
+                withContext(Dispatchers.Main) {
+                    updateBoard(dots)
                 }
             }
         }
 
-        binding.boardView.tappedDotLiveData.observe(this.viewLifecycleOwner) { dot ->
-            dotTapped(dot)
-        }
-
-        gameJob = startGame()
+        binding.boardView.tappedDotLiveData.observe(this.viewLifecycleOwner, viewModel::dotTapped)
     }
 
-    private fun dotTapped(dot: Dot) {
-        if (viewModel.isEditing.value) {
-
-        }
-    }
-
-    private fun setIsEditing(isEditing: Boolean) {
-        if (isEditing) {
-            pauseGame()
-        } else {
-            startGame()
+    private fun menuItemClicked(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            R.id.edit -> {
+                viewModel.editTapped()
+                true
+            }
+            R.id.start -> {
+                viewModel.startTapped()
+                true
+            }
+            else -> false
         }
     }
 
-    private fun runGameCycle() {
-        boardController.updateCells { cell, neighbors ->
-            LifeController.applyRules(cell, neighbors)
-        }
-    }
-
-    private fun updateBoard() {
-        binding.boardView.dots = boardController.getAliveCellDots().toTypedArray()
+    private fun updateBoard(dots: List<Dot>) {
+        binding.boardView.dots = dots.toTypedArray()
         binding.boardView.invalidate()
     }
 
-    private fun pauseGame() {
-        gameJob?.cancel()
-    }
-
-    private fun startGame(): Job {
-
-        // seed alive cells
-//        boardController.updateCell(5, 5, Cell.ALIVE)
-//        boardController.updateCell(6, 6, Cell.ALIVE)
-//        boardController.updateCell(5, 7, Cell.ALIVE)
-//        boardController.updateCell(4, 7, Cell.ALIVE)
-//        boardController.updateCell(6, 7, Cell.ALIVE)
-
-//        boardController.updateCell(5, 5, Cell.ALIVE)
-//        boardController.updateCell(5, 6, Cell.ALIVE)
-//        boardController.updateCell(6, 6, Cell.ALIVE)
-//        boardController.updateCell(6, 5, Cell.ALIVE)
-
-        return MainScope().launch {
-            withContext(Dispatchers.IO) {
-                while(isActive) {
-                    runGameCycle()
-                    withContext(Dispatchers.Main) {
-                        updateBoard()
-                    }
-                    delay(100)
-                }
-            }
-        }
-    }
+//
+//    private fun startGame(): Job {
+//
+//        // seed alive cells
+////        boardController.updateCell(5, 5, Cell.ALIVE)
+////        boardController.updateCell(6, 6, Cell.ALIVE)
+////        boardController.updateCell(5, 7, Cell.ALIVE)
+////        boardController.updateCell(4, 7, Cell.ALIVE)
+////        boardController.updateCell(6, 7, Cell.ALIVE)
+//
+////        boardController.updateCell(5, 5, Cell.ALIVE)
+////        boardController.updateCell(5, 6, Cell.ALIVE)
+////        boardController.updateCell(6, 6, Cell.ALIVE)
+////        boardController.updateCell(6, 5, Cell.ALIVE)
+//
+//        return MainScope()
+//    }
 }

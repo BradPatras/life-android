@@ -9,10 +9,13 @@ import android.widget.FrameLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.bradpatras.life.R
+import io.github.bradpatras.life.ui.main.models.Dot
+import kotlin.math.roundToInt
 
 class DotBoardView : FrameLayout {
 
-    var tappedDotLiveData: MutableLiveData<Dot?> = MutableLiveData(null)
+    private var _tappedDotLiveData: MutableLiveData<Dot> = MutableLiveData()
+    var tappedDotLiveData: LiveData<Dot> = _tappedDotLiveData
 
     var dots: Array<Dot> = emptyArray()
 
@@ -48,6 +51,10 @@ class DotBoardView : FrameLayout {
 
     private fun init() {
         setWillNotDraw(false)
+        this.setOnTouchListener { v, event ->
+            _tappedDotLiveData.postValue(createDotAtPoint(Point(event.x.roundToInt(), event.y.roundToInt())))
+            return@setOnTouchListener true
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
