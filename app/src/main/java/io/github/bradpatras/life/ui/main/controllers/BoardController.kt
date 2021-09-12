@@ -5,9 +5,10 @@ import io.github.bradpatras.life.ui.main.models.Dot
 
 typealias IsAlive = Boolean
 typealias IsAliveArray = BooleanArray
+typealias Board = Array<IsAliveArray>
 
 class BoardController(private val size: Size) {
-    private var board: Array<IsAliveArray> = getCleanBoard()
+    private var board: Board = getCleanBoard()
 
     fun updateCells(action: (IsAlive, IsAliveArray) -> IsAlive) {
         val newBoard = getCleanBoard()
@@ -23,6 +24,14 @@ class BoardController(private val size: Size) {
 
     fun clear() {
         board = getCleanBoard()
+    }
+
+    fun setBoard(board: Board) {
+        this.board = board
+    }
+
+    fun getBoard(): Board {
+        return board
     }
 
     fun getAliveCellDots(): List<Dot> {
@@ -45,7 +54,7 @@ class BoardController(private val size: Size) {
         }
     }
 
-    private fun getCleanBoard(): Array<IsAliveArray> =
+    private fun getCleanBoard(): Board =
             Array(size.height) { IsAliveArray(size.width) { false } }
 
     private fun updateCell(x: Int, y: Int, isAlive: IsAlive) {

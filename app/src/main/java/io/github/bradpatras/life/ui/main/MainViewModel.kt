@@ -3,6 +3,7 @@ package io.github.bradpatras.life.ui.main
 import android.util.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.bradpatras.life.ui.main.cache.BoardCache
 import io.github.bradpatras.life.ui.main.controllers.BoardController
 import io.github.bradpatras.life.ui.main.controllers.LifeController
 import io.github.bradpatras.life.ui.main.models.Dot
@@ -15,7 +16,8 @@ class MainViewModel : ViewModel() {
     private var _gameState = MutableStateFlow(GameState.EDITING)
     private var _gameDots: MutableStateFlow<List<Dot>> = MutableStateFlow(emptyList())
     private var gameJob: Job? = null
-    private val boardController: BoardController = BoardController(Size(500, 500))
+    private val boardController: BoardController = BoardController(Size(500, 1000))
+    private val boardCache = BoardCache()
 
     var gameState: StateFlow<GameState> = _gameState.asStateFlow()
     var gameDots: StateFlow<List<Dot>> = _gameDots.asStateFlow()
@@ -27,13 +29,14 @@ class MainViewModel : ViewModel() {
         _gameDots.value = boardController.getAliveCellDots()
     }
 
-    fun editTapped() {
+    fun stopTapped() {
         _gameState.value = GameState.EDITING
         gameJob?.cancel()
         gameJob = null
     }
 
     fun startTapped() {
+        boardCache.put(boardController.getBoard())
         _gameState.value = GameState.PLAYING
         gameJob = viewModelScope.launch {
             while(isActive) {
@@ -41,6 +44,13 @@ class MainViewModel : ViewModel() {
                 _gameDots.value = boardController.getAliveCellDots()
                 delay(100)
             }
+        }
+    }
+
+    fun revertTapped() {
+        boardCache.removeLatest()?.let {
+            boardController.setBoard(it)
+            _gameDots.value = boardController.getAliveCellDots()
         }
     }
 

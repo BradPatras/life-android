@@ -45,14 +45,16 @@ class MainFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         when (gameState) {
                             GameState.PLAYING -> {
-                                binding.topBar.menu.findItem(R.id.edit)?.isVisible = true
+                                binding.topBar.menu.findItem(R.id.stop)?.isVisible = true
                                 binding.topBar.menu.findItem(R.id.start)?.isVisible = false
                                 binding.topBar.menu.findItem(R.id.clear)?.isVisible = false
+                                binding.topBar.menu.findItem(R.id.revert)?.isVisible = false
                             }
                             GameState.EDITING -> {
-                                binding.topBar.menu.findItem(R.id.edit)?.isVisible = false
+                                binding.topBar.menu.findItem(R.id.stop)?.isVisible = false
                                 binding.topBar.menu.findItem(R.id.start)?.isVisible = true
                                 binding.topBar.menu.findItem(R.id.clear)?.isVisible = true
+                                binding.topBar.menu.findItem(R.id.revert)?.isVisible = true
                             }
                         }
                     }
@@ -73,8 +75,8 @@ class MainFragment : Fragment() {
 
     private fun menuItemClicked(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
-            R.id.edit -> {
-                viewModel.editTapped()
+            R.id.stop -> {
+                viewModel.stopTapped()
                 true
             }
             R.id.start -> {
@@ -83,6 +85,10 @@ class MainFragment : Fragment() {
             }
             R.id.clear -> {
                 viewModel.clearTapped()
+                true
+            }
+            R.id.revert -> {
+                viewModel.revertTapped()
                 true
             }
             else -> false
