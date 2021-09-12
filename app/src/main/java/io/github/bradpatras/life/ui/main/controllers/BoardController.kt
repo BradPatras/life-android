@@ -1,30 +1,36 @@
 package io.github.bradpatras.life.ui.main.controllers
 
 import android.util.Size
-import io.github.bradpatras.life.ui.main.models.Cell
 import io.github.bradpatras.life.ui.main.models.Dot
-import io.github.bradpatras.life.ui.main.views.DotBoardView
+
+typealias IsAlive = Boolean
+typealias IsAliveArray = BooleanArray
 
 class BoardController(private val size: Size) {
-    private var board: Array<Array<Cell>> = Array(size.height) { Array(size.width) { Cell.DEAD } }
+    private var board: Array<IsAliveArray> = getCleanBoard()
 
-    fun updateCells(action: (Cell, Array<Cell>) -> Cell) {
-        board = board.mapIndexed { x, columns ->
-            columns.mapIndexed { y, cell ->
-                action(cell, getCellNeighbors(x, y))
-            }.toTypedArray()
-        }.toTypedArray()
+    fun updateCells(action: (IsAlive, IsAliveArray) -> IsAlive) {
+        val newBoard = getCleanBoard()
+        for (x in board.indices) {
+            val boardColumn = board[x]
+            for (y in boardColumn.indices) {
+                newBoard[x][y] = action(board[x][y], getCellNeighbors(x, y))
+            }
+        }
+
+        board = newBoard
     }
 
-    fun updateCell(x: Int, y: Int, cell: Cell) {
-        board.getOrNull(x)?.set(y, cell)
+    fun clear() {
+        board = getCleanBoard()
     }
 
     fun getAliveCellDots(): List<Dot> {
-        var aliveDots = mutableListOf<Dot>()
-        board.forEachIndexed { x, columns ->
-            columns.forEachIndexed { y, cell ->
-                if (cell == Cell.ALIVE) {
+        val aliveDots = mutableListOf<Dot>()
+        for (x in board.indices) {
+            val column = board[x]
+            for (y in column.indices) {
+                if (getCellIsAlive(x, y) == true) {
                     aliveDots.add(Dot(x, y))
                 }
             }
@@ -33,20 +39,33 @@ class BoardController(private val size: Size) {
         return aliveDots
     }
 
-    private fun getCell(x: Int, y: Int): Cell? {
+    fun toggleCell(x: Int, y: Int) {
+        getCellIsAlive(x, y)?.let { current ->
+            updateCell(x, y, !current)
+        }
+    }
+
+    private fun getCleanBoard(): Array<IsAliveArray> =
+            Array(size.height) { IsAliveArray(size.width) { false } }
+
+    private fun updateCell(x: Int, y: Int, isAlive: IsAlive) {
+        board.getOrNull(x)?.set(y, isAlive)
+    }
+
+    private fun getCellIsAlive(x: Int, y: Int): IsAlive? {
         return board.getOrNull(x)?.getOrNull(y)
     }
 
-    private fun getCellNeighbors(x: Int, y: Int): Array<Cell> {
-        return arrayOf(
-                getCell(x - 1, y - 1) ?: Cell.DEAD,
-                getCell(x, y - 1) ?: Cell.DEAD,
-                getCell(x - 1, y) ?: Cell.DEAD,
-                getCell(x + 1, y + 1) ?: Cell.DEAD,
-                getCell(x, y + 1) ?: Cell.DEAD,
-                getCell(x + 1, y) ?: Cell.DEAD,
-                getCell(x - 1, y + 1) ?: Cell.DEAD,
-                getCell(x + 1, y - 1) ?: Cell.DEAD
+    private fun getCellNeighbors(x: Int, y: Int): IsAliveArray {
+        return booleanArrayOf(
+                getCellIsAlive(x - 1, y - 1) ?: false,
+                getCellIsAlive(x, y - 1) ?: false,
+                getCellIsAlive(x - 1, y) ?: false,
+                getCellIsAlive(x + 1, y + 1) ?: false,
+                getCellIsAlive(x, y + 1) ?: false,
+                getCellIsAlive(x + 1, y) ?: false,
+                getCellIsAlive(x - 1, y + 1) ?: false,
+                getCellIsAlive(x + 1, y - 1) ?: false
         )
     }
 }

@@ -40,24 +40,30 @@ class MainFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         lifecycleScope.launchWhenCreated {
-            viewModel.gameState.collect { gameState ->
-                withContext(Dispatchers.Main) {
-                    when (gameState) {
-                        GameState.PLAYING -> {
-                            binding.topBar.menu.findItem(R.id.edit)?.isVisible = true
-                            binding.topBar.menu.findItem(R.id.start)?.isVisible = false
-                        }
-                        GameState.EDITING -> {
-                            binding.topBar.menu.findItem(R.id.edit)?.isVisible = false
-                            binding.topBar.menu.findItem(R.id.start)?.isVisible = true
+            launch {
+                viewModel.gameState.collect { gameState ->
+                    withContext(Dispatchers.Main) {
+                        when (gameState) {
+                            GameState.PLAYING -> {
+                                binding.topBar.menu.findItem(R.id.edit)?.isVisible = true
+                                binding.topBar.menu.findItem(R.id.start)?.isVisible = false
+                                binding.topBar.menu.findItem(R.id.clear)?.isVisible = false
+                            }
+                            GameState.EDITING -> {
+                                binding.topBar.menu.findItem(R.id.edit)?.isVisible = false
+                                binding.topBar.menu.findItem(R.id.start)?.isVisible = true
+                                binding.topBar.menu.findItem(R.id.clear)?.isVisible = true
+                            }
                         }
                     }
                 }
             }
 
-            viewModel.gameDots.collect { dots ->
-                withContext(Dispatchers.Main) {
-                    updateBoard(dots)
+            launch {
+                viewModel.gameDots.collect { dots ->
+                    withContext(Dispatchers.Main) {
+                        updateBoard(dots)
+                    }
                 }
             }
         }
@@ -75,12 +81,16 @@ class MainFragment : Fragment() {
                 viewModel.startTapped()
                 true
             }
+            R.id.clear -> {
+                viewModel.clearTapped()
+                true
+            }
             else -> false
         }
     }
 
     private fun updateBoard(dots: List<Dot>) {
-        binding.boardView.dots = dots.toTypedArray()
+        binding.boardView.dots = dots
         binding.boardView.invalidate()
     }
 

@@ -23,23 +23,19 @@ class MainViewModel : ViewModel() {
     fun dotTapped(dot: Dot) {
         if (gameState.value != GameState.EDITING) return
 
-        val dots = gameDots.value.toMutableList()
-        if (dots.contains(dot)) {
-            dots.remove(dot)
-        } else {
-            dots.add(dot)
-        }
-        _gameDots.value = dots
+        boardController.toggleCell(dot.x, dot.y)
+        _gameDots.value = boardController.getAliveCellDots()
     }
 
     fun editTapped() {
         _gameState.value = GameState.EDITING
         gameJob?.cancel()
+        gameJob = null
     }
 
     fun startTapped() {
         _gameState.value = GameState.PLAYING
-        viewModelScope.launch {
+        gameJob = viewModelScope.launch {
             while(isActive) {
                 runGameCycle()
                 _gameDots.value = boardController.getAliveCellDots()
@@ -48,9 +44,14 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun clearTapped() {
+        boardController.clear()
+        _gameDots.value = emptyList()
+    }
+
     private fun runGameCycle() {
-        boardController.updateCells { cell, neighbors ->
-            LifeController.applyRules(cell, neighbors)
+        boardController.updateCells { isAlive, neighbors ->
+            LifeController.computeLivingState(isAlive, neighbors)
         }
     }
 }
