@@ -39,10 +39,12 @@ class MainViewModel : ViewModel() {
         boardCache.put(boardController.getBoard())
         _gameState.value = GameState.PLAYING
         gameJob = viewModelScope.launch {
-            while(isActive) {
-                runGameCycle()
-                _gameDots.value = boardController.getAliveCellDots()
-                delay(100)
+            withContext(Dispatchers.IO) {
+                while(isActive) {
+                    runGameCycle()
+                    _gameDots.value = boardController.getAliveCellDots()
+                    delay(100)
+                }
             }
         }
     }

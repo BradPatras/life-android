@@ -1,7 +1,9 @@
 package io.github.bradpatras.life.ui.main.controllers
 
+import android.util.Log
 import android.util.Size
 import io.github.bradpatras.life.ui.main.models.Dot
+import kotlin.system.measureTimeMillis
 
 typealias IsAlive = Boolean
 typealias IsAliveArray = BooleanArray
