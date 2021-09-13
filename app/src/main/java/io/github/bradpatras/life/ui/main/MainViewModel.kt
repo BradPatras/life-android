@@ -41,7 +41,7 @@ class MainViewModel : ViewModel() {
         boardCache.put(boardController.getBoard())
         _gameState.value = GameState.PLAYING
         gameJob = viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            withContext(Dispatchers.Default) {
                 while(isActive) {
                     runGameCycle()
                     _gameDots.value = boardController.getAliveCellDots()
