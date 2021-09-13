@@ -4,17 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
-
-import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.github.bradpatras.life.R
 import io.github.bradpatras.life.ui.main.models.Dot
 import kotlin.math.roundToInt
-import kotlin.system.measureTimeMillis
 
 class DotBoardView : FrameLayout {
 

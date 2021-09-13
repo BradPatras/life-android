@@ -9,7 +9,9 @@ import io.github.bradpatras.life.ui.main.controllers.LifeController
 import io.github.bradpatras.life.ui.main.models.Dot
 import io.github.bradpatras.life.ui.main.models.GameState
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class MainViewModel : ViewModel() {
 
