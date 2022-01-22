@@ -15,17 +15,4 @@ From [Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules):
 > The initial pattern constitutes the seed of the system. The first generation is created by applying the above rules simultaneously to every cell in the seed, live or dead; births and deaths occur simultaneously, and the discrete moment at which this happens is sometimes called a tick. Each generation is a pure function of the preceding one. The rules continue to be applied repeatedly to create further generations.
 
 
-## Update Algorithm
-Before I look up algorithms for carrying out generational updates, I'll try to come up with something clever...
-
-### The straight forward approach
-keep a 2D array of spaces with a status of alive or dead.
-
-Loop through the array and for each space, apply the rules of life to the current space depending on how many neighboring spaces are alive.
-
-### Alive Spaces-based approach
-Don't loop through the entire board, only test spaces that are neighboring the currently alive spaces.  
-
-it'll need to keep track of the alive spaces in a separate property from the 2D board of spaces. 
-
-First build up a set of "relevant spaces" by looping through the alive array and for each alive space, add its coordinate and all its neighbor coordinates.  Then run the life rules on the "relevant spaces" set.  
+![glider](glider.gif) ![gun](gun.gif)
