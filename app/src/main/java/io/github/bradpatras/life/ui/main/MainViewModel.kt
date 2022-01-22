@@ -51,6 +51,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun stepTapped() {
+        boardCache.put(boardController.getBoard())
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                runGameCycle()
+                _gameDots.value = boardController.getAliveCellDots()
+            }
+        }
+    }
+
     fun revertTapped() {
         boardCache.removeLatest()?.let {
             boardController.setBoard(it)

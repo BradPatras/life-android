@@ -32,12 +32,14 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.topBar.apply {
-            inflateMenu(R.menu.main_menu)
-            setOnMenuItemClickListener(this@MainFragment::menuItemClicked)
-        }
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        binding.stopButton.setOnClickListener { viewModel.stopTapped() }
+        binding.startButton.setOnClickListener { viewModel.startTapped() }
+        binding.clearButton.setOnClickListener { viewModel.clearTapped() }
+        binding.revertButton.setOnClickListener { viewModel.revertTapped() }
+        binding.stepButton.setOnClickListener { viewModel.stepTapped() }
 
         lifecycleScope.launchWhenCreated {
             launch {
@@ -45,16 +47,18 @@ class MainFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         when (gameState) {
                             GameState.PLAYING -> {
-                                binding.topBar.menu.findItem(R.id.stop)?.isVisible = true
-                                binding.topBar.menu.findItem(R.id.start)?.isVisible = false
-                                binding.topBar.menu.findItem(R.id.clear)?.isVisible = false
-                                binding.topBar.menu.findItem(R.id.revert)?.isVisible = false
+                                binding.stopButton.visibility = View.VISIBLE
+                                binding.startButton.visibility = View.GONE
+                                binding.clearButton.visibility = View.GONE
+                                binding.revertButton.visibility = View.GONE
+                                binding.stepButton.visibility = View.GONE
                             }
                             GameState.EDITING -> {
-                                binding.topBar.menu.findItem(R.id.stop)?.isVisible = false
-                                binding.topBar.menu.findItem(R.id.start)?.isVisible = true
-                                binding.topBar.menu.findItem(R.id.clear)?.isVisible = true
-                                binding.topBar.menu.findItem(R.id.revert)?.isVisible = true
+                                binding.stopButton.visibility = View.GONE
+                                binding.startButton.visibility = View.VISIBLE
+                                binding.clearButton.visibility = View.VISIBLE
+                                binding.revertButton.visibility = View.VISIBLE
+                                binding.stepButton.visibility = View.VISIBLE
                             }
                         }
                     }
@@ -73,33 +77,10 @@ class MainFragment : Fragment() {
         binding.boardView.tappedDotLiveData.observe(this.viewLifecycleOwner, viewModel::dotTapped)
     }
 
-    private fun menuItemClicked(menuItem: MenuItem): Boolean {
-        return when (menuItem.itemId) {
-            R.id.stop -> {
-                viewModel.stopTapped()
-                true
-            }
-            R.id.start -> {
-                viewModel.startTapped()
-                true
-            }
-            R.id.clear -> {
-                viewModel.clearTapped()
-                true
-            }
-            R.id.revert -> {
-                viewModel.revertTapped()
-                true
-            }
-            else -> false
-        }
-    }
-
     private fun updateBoard(dots: List<Dot>) {
         binding.boardView.dots = dots
         binding.boardView.invalidate()
     }
-
 //
 //    private fun startGame(): Job {
 //
