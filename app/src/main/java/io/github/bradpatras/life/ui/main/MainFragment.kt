@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.SpinnerAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -75,6 +78,30 @@ class MainFragment : Fragment() {
         }
 
         binding.boardView.tappedDotLiveData.observe(this.viewLifecycleOwner, viewModel::dotTapped)
+
+        ArrayAdapter<String>(
+            this.requireContext(),
+            R.layout.spinner_item,
+            viewModel.rulesetTitles
+        ).also {
+            binding.rulesSpinner.adapter = it
+            it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+
+        binding.rulesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.rulesetSelected(position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                viewModel.rulesetSelected(null)
+            }
+        }
     }
 
     private fun updateBoard(dots: List<Dot>) {
