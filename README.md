@@ -1,4 +1,8 @@
 # life-android
+Android app to play around with cellular automaton using Conway's original game of life rules and also the HighLife rules.
+
+
+### Conway
 From [Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules):
 
 > The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, live or dead, (or populated and unpopulated, respectively). Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:
@@ -16,3 +20,9 @@ From [Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules):
 
 
 ![glider](glider.gif) ![gun](gun.gif)
+
+### HighLife
+From [Wikipedia](https://en.wikipedia.org/wiki/Highlife_(cellular_automaton))
+> Highlife is a cellular automaton similar to Conway's Game of Life. It was devised in 1994 by Nathan Thompson. It is a two-dimensional, two-state cellular automaton in the "Life family" and is described by the rule B36/S23; that is, a cell is born if it has 3 or 6 neighbors and survives if it has 2 or 3 neighbors.
+
+![replication](replicator.gif)
